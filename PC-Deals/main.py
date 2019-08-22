@@ -3,15 +3,54 @@ import praw
 import tweet
 import rowData
 import csvFactory
+import random
 
 keywordFlag = False
 
 reddit = praw.Reddit('bot1')
 subreddit = reddit.subreddit('buildapcsales')
 
-def parsingDeals():
+def parsingRisingDeals():
     Posted = False
     for submission in subreddit.rising(limit=5):
+        title = submission.title
+        print("Title: ", title)
+        part = identifyPCPart(title);
+        print("Part: ", part)
+        price = getPrice(title)
+        print("Price: ", price)
+        #print("Score: ", submission.score)
+        url = submission.url
+        print("URL: ", url)
+        print("--------------------------------\n")
+        data = rowData.RowData(title,part,price,url)
+        Posted = preparingTweet(data)
+        if (Posted):
+            break
+    print ("Tweet Posted")
+    
+def parsingHotDeals():
+    Posted = False
+    for submission in subreddit.hot(limit=5):
+        title = submission.title
+        print("Title: ", title)
+        part = identifyPCPart(title);
+        print("Part: ", part)
+        price = getPrice(title)
+        print("Price: ", price)
+        #print("Score: ", submission.score)
+        url = submission.url
+        print("URL: ", url)
+        print("--------------------------------\n")
+        data = rowData.RowData(title,part,price,url)
+        Posted = preparingTweet(data)
+        if (Posted):
+            break
+    print ("Tweet Posted")
+
+def parsingNewDeals():
+    Posted = False
+    for submission in subreddit.new(limit=5):
         title = submission.title
         print("Title: ", title)
         part = identifyPCPart(title);
@@ -90,12 +129,25 @@ def DecisionTree():
         global keywordFlag 
         keywordFlag = True
         keywordChecker()
-        parsingDeals()
-
-        
+        randomSearch()
     else:
-        parsingDeals()
+        randomSearch()
 
+def randomSearch():
+    randInt = random.randint(1,11)
+    decidingSearchType(randInt)
+    
+def decidingSearchType(randInt: int):
+    if (randInt != None):
+        if (randInt >= 1 and randInt < 4):
+            print("Search Rising")
+            parsingRisingDeals()
+        if (randInt >= 4 and randInt < 7):
+            print("Search Hot")
+            parsingHotDeals()
+        else:
+            print("Search New")
+            parsingNewDeals()
         
 if __name__ == "__main__":
-    DecisionTree()
+    randomSearch()

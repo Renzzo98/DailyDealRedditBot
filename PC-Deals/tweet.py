@@ -15,7 +15,7 @@ api = tweepy.API(auth)
 # Tweet Msg Format 
 
 def setupTweet(data: rowData):
-    msgFormat = data.title + "\n\n" + "Type: " + data.category + "\n" + "Sale Price: " + data.price + "\n" + data.url
+    msgFormat = data.title + "\n\n" + "Type: " + data.category + "\n" + "Sale Price: $" + data.price + "\n" + data.url
     postTweet(msgFormat)
     
 # Create a Tweet
