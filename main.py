@@ -1,13 +1,26 @@
 #!/usr/bin/python
+
+#import tweet
 import praw 
-import tweet
 import rowData
 import csvFactory
 import random
+import configparser
+
 
 keywordFlag = False
 
-reddit = praw.Reddit('bot1')
+# Create a ConfigParser instance
+config = configparser.ConfigParser()
+
+# Read the INI file
+config.read('praw.ini')
+
+reddit = praw.Reddit(
+    client_id = config['RedditAcccount']['clientID'],
+    client_secret = config['RedditAcccount']['clientSecret'],
+    user_agent = config['RedditAcccount']['userAgent']
+)
 subreddit = reddit.subreddit('buildapcsales')
 
 def parsingRisingDeals():
@@ -15,7 +28,7 @@ def parsingRisingDeals():
     for submission in subreddit.rising(limit=5):
         title = submission.title
         print("Title: ", title)
-        part = identifyPCPart(title);
+        part = identifyPCPart(title)
         print("Part: ", part)
         price = getPrice(title)
         print("Price: ", price)
@@ -34,7 +47,7 @@ def parsingHotDeals():
     for submission in subreddit.hot(limit=5):
         title = submission.title
         print("Title: ", title)
-        part = identifyPCPart(title);
+        part = identifyPCPart(title)
         print("Part: ", part)
         price = getPrice(title)
         print("Price: ", price)
@@ -72,10 +85,11 @@ def preparingTweet(data):
     result = csvFactory.checkPrevPosted(data.title)
     if (result):
         csvFactory.appendToDatabase(data)
-        tweet.setupTweet(data)
+        # tweet.setupTweet(data)
         return True
     else:
         return False
+
 # Works for buildPC only
 def identifyPCPart(title):
     if (title != None):

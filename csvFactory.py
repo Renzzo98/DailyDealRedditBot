@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import csv
 import pandas
-import rowData
 
 file_name = "deals_database.csv"
 
